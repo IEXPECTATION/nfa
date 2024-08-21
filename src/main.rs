@@ -1,8 +1,14 @@
 use std::{collections::HashMap, fmt::Display, vec};
 
+enum Operand {
+    Epsilon,
+    Character(char),
+}
+
 struct State {
-    operand: char,
+    operand: Operand,
     next: HashMap<char, State>,
+    accpect: bool,
 }
 
 impl State {}
@@ -14,18 +20,23 @@ struct Automaton {
 impl Automaton {
     fn compile(&mut self, regex: &str) {
         // Traverse the `regex` to generate the nfa.
-        let chars = regex.chars();
-        let length = chars.count();
+        let s = regex.to_string();
+        let mut chars = s.chars();
 
         let operator: Vec<State> = Vec::new();
+        let character: Vec<State> = Vec::new();
 
-        let i = 0;
-        loop {
-            if i == length {
-                break;
-            }
+        while let Some(c) = chars.next() {
+            match c {
+                '|' => (),
+                '+' => (),
+                '*' => (),
+                '?' => (),
+                c => {
+                    println!("{c}");
+                }
+            };
         }
-        for (index, s) in regex.chars().enumerate() {}
     }
 
     fn accept(&self, text: &str) -> String {
@@ -71,6 +82,6 @@ impl NFA {
 }
 
 fn main() {
-    let mut nfa = NFA::new("abc");
+    let mut nfa = NFA::new("abc|你好+");
     nfa.compile();
 }
