@@ -1,39 +1,46 @@
-use std::{collections::HashMap, fmt::Display, vec};
+use std::{
+    collections::HashMap,
+    rc::{self, Rc},
+};
 
-enum Operand {
-    Epsilon,
-    Character(char),
-}
+const EPSILON: char = 'ε';
 
+#[derive(Default)]
 struct State {
-    operand: Operand,
     next: HashMap<char, State>,
-    accpect: bool,
+    accept: bool,
 }
 
-impl State {}
-
-struct Automaton {
-    startState: Option<State>,
+impl State {
+    fn new(accept: bool) -> Self {
+        Self {
+            next: HashMap::new(),
+            accept: accept,
+        }
+    }
 }
 
-impl Automaton {
+#[derive(Default)]
+struct Automaton<'a> {
+    start_state: &'a State,
+    operator: Vec<&'a State>,
+    character: Vec<&'a State>,
+}
+
+impl Automaton<'_> {
     fn compile(&mut self, regex: &str) {
         // Traverse the `regex` to generate the nfa.
         let s = regex.to_string();
         let mut chars = s.chars();
 
-        let operator: Vec<State> = Vec::new();
-        let character: Vec<State> = Vec::new();
-
         while let Some(c) = chars.next() {
             match c {
-                '|' => (),
+                '|' => self.or(),
                 '+' => (),
                 '*' => (),
                 '?' => (),
                 c => {
-                    println!("{c}");
+                    self.concat(c, false);
                 }
             };
         }
@@ -43,18 +50,33 @@ impl Automaton {
         // Run the nfa to match the text.
         String::from("accept!")
     }
+
+    fn or(&mut self) {
+        ()
+    }
+
+    fn concat(&mut self, c: char, accpect: bool) {
+        if self.character.len() == 0 {
+            self.character.push(self.start_state);
+            self.start_state.next.insert('c', Default::default());
+        }
+
+        if let Some(top) = self.character.last_mut() {
+            // top.next.insert(c, State::new(false));
+        }
+    }
 }
 
-struct NFA {
+struct NFA<'a> {
     regex: String,
-    machine: Automaton,
+    machine: Automaton<'a>,
 }
 
-impl NFA {
+impl NFA<'_> {
     fn new(regex: &str) -> Self {
         NFA {
             regex: String::from(regex),
-            machine: Automaton { startState: None },
+            machine: Default::default(),
         }
     }
 
@@ -68,7 +90,7 @@ impl NFA {
         self.regex = String::from(regex);
     }
 
-    fn compile(&mut self) {
+    pub fn compile(&mut self) {
         self.machine.compile(&self.regex);
     }
 
@@ -76,12 +98,12 @@ impl NFA {
         self.machine.accept(text)
     }
 
-    fn fmt(self) -> String {
-        return "".to_string();
+    fn test(&self, regex: &str, text: &str) -> String {
+        String::new()
     }
 }
 
 fn main() {
-    let mut nfa = NFA::new("abc|你好+");
-    nfa.compile();
+    // let mut nfa = NFA::new("abc|你好+");
+    // nfa.compile();
 }
