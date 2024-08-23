@@ -1,33 +1,26 @@
 use std::{
+    cell::RefCell,
     collections::HashMap,
+    fmt::Display,
     rc::{self, Rc},
 };
 
 const EPSILON: char = 'ε';
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 struct State {
-    next: HashMap<char, State>,
-    accept: bool,
-}
-
-impl State {
-    fn new(accept: bool) -> Self {
-        Self {
-            next: HashMap::new(),
-            accept: accept,
-        }
-    }
+    accepting: bool,
+    next: HashMap<char, Rc<RefCell<State>>>,
 }
 
 #[derive(Default)]
-struct Automaton<'a> {
-    start_state: &'a State,
-    operator: Vec<&'a State>,
-    character: Vec<&'a State>,
+struct Automaton {
+    start_state: Rc<RefCell<State>>,
+    operator: Vec<char>,
+    state: Vec<Rc<RefCell<State>>>,
 }
 
-impl Automaton<'_> {
+impl Automaton {
     fn compile(&mut self, regex: &str) {
         // Traverse the `regex` to generate the nfa.
         let s = regex.to_string();
@@ -52,27 +45,37 @@ impl Automaton<'_> {
     }
 
     fn or(&mut self) {
-        ()
-    }
-
-    fn concat(&mut self, c: char, accpect: bool) {
-        if self.character.len() == 0 {
-            self.character.push(self.start_state);
-            self.start_state.next.insert('c', Default::default());
+        if self.state.len() == 1 {
+            // If there is only a start state, return immediately.
+            // It looks lile "|bcd"
+            return;
         }
 
-        if let Some(top) = self.character.last_mut() {
-            // top.next.insert(c, State::new(false));
+        self.operator.push('|');
+    }
+
+    fn concat(&mut self, c: char, accepting: bool) {
+        if (self.state.len() == 0) {
+            let state: Rc<RefCell<State>> = Default::default();
+            self.state.push(state.clone());
+            return;
+        }
+
+        if let Some(top) = self.state.last_mut() {
+            let mut state = top.borrow_mut();
+
+            let newState: Rc<RefCell<State>> = Default::default();
+            state.next.insert(c, newState.clone());
         }
     }
 }
 
-struct NFA<'a> {
+struct NFA {
     regex: String,
-    machine: Automaton<'a>,
+    machine: Automaton,
 }
 
-impl NFA<'_> {
+impl NFA {
     fn new(regex: &str) -> Self {
         NFA {
             regex: String::from(regex),
@@ -104,6 +107,11 @@ impl NFA<'_> {
 }
 
 fn main() {
-    // let mut nfa = NFA::new("abc|你好+");
-    // nfa.compile();
+    let mut nfa = NFA::new("abc");
+    nfa.compile();
+
+    for item in nfa.machine.state {
+        let state = item.borrow();
+        println!("{state:?}");
+    }
 }
