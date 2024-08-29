@@ -1,5 +1,5 @@
 use std::{
-    cell::RefCell,
+    cell::{Ref, RefCell},
     collections::HashMap,
     fmt::Display,
     rc::{self, Rc},
@@ -13,11 +13,16 @@ struct State {
     next: HashMap<char, Rc<RefCell<State>>>,
 }
 
+struct Fragment {
+    start: Rc<RefCell<State>>,
+    end: Rc<RefCell<State>>,
+}
+
 #[derive(Default)]
 struct Automaton {
     start_state: Rc<RefCell<State>>,
     operator: Vec<char>,
-    state: Vec<Rc<RefCell<State>>>,
+    state: Vec<Rc<RefCell<Fragment>>>,
 }
 
 impl Automaton {
@@ -57,7 +62,7 @@ impl Automaton {
     fn concat(&mut self, c: char, accepting: bool) {
         if (self.state.len() == 0) {
             let state: Rc<RefCell<State>> = Default::default();
-            self.state.push(state.clone());
+            // self.state.push(state.clone());
             return;
         }
 
@@ -65,7 +70,7 @@ impl Automaton {
             let mut state = top.borrow_mut();
 
             let newState: Rc<RefCell<State>> = Default::default();
-            state.next.insert(c, newState.clone());
+            // state.next.insert(c, newState.clone());
         }
     }
 }
@@ -110,8 +115,8 @@ fn main() {
     let mut nfa = NFA::new("abc");
     nfa.compile();
 
-    for item in nfa.machine.state {
-        let state = item.borrow();
-        println!("{state:?}");
-    }
+    // for item in nfa.machine.state {
+    //     let state = item.borrow();
+    //     println!("{state:?}");
+    // }
 }
