@@ -1,41 +1,18 @@
-enum State {}
+mod nfa;
+mod scanner;
+mod tokenizer;
 
-struct NFA {
-    pattern: String,
-}
+use crate::tokenizer::Token;
 
-impl NFA {
-    fn new() -> Self {
-        NFA {
-            pattern: String::new(),
-        }
-    }
-
-    fn push_str(&mut self, pattern: &str) {
-        self.pattern.push_str(pattern);
-    }
-
-    fn compile(&mut self) {}
-
-    fn match_str(&self, text: &'static str) {}
-
-    fn match_string(&self, text: &String) {}
-}
-
-impl From<&str> for NFA {
-    fn from(value: &str) -> Self {
-        NFA {
-            pattern: String::from(value),
-        }
-    }
-}
-
-impl From<String> for NFA {
-    fn from(value: String) -> Self {
-        NFA { pattern: value }
-    }
-}
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::{Debug, Display},
+    u32, vec,
+};
 
 fn main() {
-    let a = NFA::new();
+    let mut nfa = nfa::NFA::new();
+
+    // let ret = nfa.accept("a").unwrap();
+    // print!("{}", ret);
 }
