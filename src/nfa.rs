@@ -4,7 +4,7 @@ use std::{
     fmt::Display,
 };
 
-use crate::tokenizer;
+use crate::parser::{self, Token};
 
 #[derive(Debug)]
 enum Regex {}
@@ -50,18 +50,9 @@ impl NFA {
         }
     }
 
-    fn to_postfix(regex: &str) -> Vec<tokenizer::Token> {
-        let mut postfix = Vec::<tokenizer::Token>::new();
-        let mut stack = Vec::<tokenizer::Token>::new();
-        let mut chars = regex.chars()/* .fuse() */;
-
-        postfix
-    }
-
-    fn compile(&mut self, regex: &str) {
-        let tokenizer = tokenizer::Tokenizer::new(regex);
-
-        while let token = tokenizer.next() {}
+    pub(crate) fn compile(&mut self, regex: &str) -> Vec<Token> {
+        let mut parser = parser::PostfixParser::new(regex);
+        return parser.parse();
     }
 
     fn or(&mut self) {}

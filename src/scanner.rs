@@ -31,7 +31,7 @@ impl Scanner {
         }
     }
 
-    fn next(&mut self, number: usize) -> String {
+    pub(crate) fn next(&mut self, number: usize) -> String {
         let s = self
             .buffer
             .chars()
@@ -43,11 +43,17 @@ impl Scanner {
         s
     }
 
-    fn peek(&self) -> Option<char> {
+    pub(crate) fn peek(&self) -> Option<char> {
         self.buffer.chars().nth(self.offset)
     }
 
-    fn consume(&mut self, ch: char) -> bool {
+    pub(crate) fn consume(&mut self) -> Option<char> {
+        let c = self.peek();
+        self.advance_once();
+        c
+    }
+
+    pub(crate) fn consume_if(&mut self, ch: char) -> bool {
         let peek = self.peek();
         if let Some(c) = peek {
             if c == ch {
@@ -58,19 +64,19 @@ impl Scanner {
         return false;
     }
 
-    fn advance(&mut self, number: usize) {
+    pub(crate) fn advance(&mut self, number: usize) {
         self.offset += number;
     }
 
-    fn advance_once(&mut self) {
+    pub(crate) fn advance_once(&mut self) {
         self.offset += 1;
     }
 
-    fn retreat(&mut self, number: usize) {
+    pub(crate) fn retreat(&mut self, number: usize) {
         self.offset -= number;
     }
 
-    fn retreat_once(&mut self) {
+    pub(crate) fn retreat_once(&mut self) {
         self.offset -= 1;
     }
 }
