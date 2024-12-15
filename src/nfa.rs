@@ -185,7 +185,7 @@ impl NFA {
                         let v2 = self.new_id();
 
                         self.transitions.add(v1, State::Epsilon, f1.from);
-                        self.transitions.add(f1.from, State::Epsilon, v1);
+                        self.transitions.add(f1.to, State::Epsilon, v1);
                         self.transitions.add(f1.to, State::Epsilon, v2);
 
                         stack.push(Fragment { from: v1, to: v2 });
