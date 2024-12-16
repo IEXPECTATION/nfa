@@ -4,4 +4,4 @@ A simple repo for learning nfa.
 
 ## Demo
 
-![Demo](image.png)
+![Demo](./imgs/demo.png)
